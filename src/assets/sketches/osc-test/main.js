@@ -1,27 +1,37 @@
-const websocketUrl = "ws://127.0.0.1:6050";
+const websocketServer = "ws://127.0.0.1:6050";
 
-let socket = new WebSocket(websocketUrl);
+const oscPort = new osc.WebSocketPort({
+  url: websocketServer,
+  metadata: true,
+});
+const viewPortWidth = window.innerWidth;
+const viewPortHeight = window.innerHeight;
 
-socket.onopen = function (e) {
-  console.log("[open] Connection established");
-  console.log("Sending to server");
-  socket.send("My name is John");
-};
+console.log("screen: ", viewPortWidth, viewPortHeight);
 
-socket.onmessage = function (event) {
-  console.log("event: ", event.data);
-};
+oscPort.open();
 
-socket.onclose = function (event) {
-  if (event.wasClean) {
-    console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-  } else {
-    // e.g. server process killed or network down
-    // event.code is usually 1006 in this case
-    console.log("[close] Connection died");
+oscPort.on("message", function (msg) {
+  if (msg.args[1]) {
+    const trackedDevice = {
+      id: msg.args[0].value,
+      identify: msg.args[1].value,
+      x: msg.args[2].value,
+      y: msg.args[3].value,
+      rot: msg.args[4].value,
+      intens: msg.args[5].value,
+    };
+
+    const xPos = trackedDevice.x * viewPortWidth;
+    const yPos = trackedDevice.y * viewPortHeight;
+    console.log("position: ", xPos, yPos);
+
+    if (msg.address === "/tracker/add") {
+      wsPort.emit("addDevice", trackedDevice);
+    } else if (msg.address === "/tracker/update") {
+      wsPort.emit("updateDevice", trackedDevice);
+    } else if (msg.address === "/tracker/remove") {
+      wsPort.emit("removeDevice", trackedDevice);
+    }
   }
-};
-
-socket.onerror = function (error) {
-  alert(`[error]`);
-};
+});
