@@ -1,71 +1,80 @@
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-
-import SketchContainer from '@/components/sketch/Container.vue';
-import Overlay from '@/components/Overlay.vue';
-
-export default defineComponent({
-  name: 'App',
-  components: {
-    SketchContainer,
-    Overlay,
-  },
-  setup() {
-    const envClass = computed(() => process.env.NODE_ENV);
-    return { envClass };
-  },
-});
+<script setup>
+import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <div class="env" :class="envClass">
-    <sketch-container />
-    <overlay />
-  </div>
+  <header>
+    <div class="wrapper">
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/project">About</RouterLink>
+      </nav>
+    </div>
+  </header>
+
+  <RouterView />
 </template>
 
-<style lang="scss">
-body {
+<style scoped>
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
+
+.logo {
+  display: block;
   margin: 0;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
 
-#app {
-  font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: white;
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
 
-  .env {
-    &.production {
-      cursor: pointer;
-      user-select: none;
-    }
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
   }
 
-  p {
-    font-size: 20px;
-    line-height: 30px;
-    font-style: normal;
-    font-weight: 300;
-    margin: 0;
+  .logo {
+    margin: 0 2rem 0 0;
   }
 
-  h1 {
-    font-size: 100px;
-    font-weight: 700;
-    line-height: 100px;
-    font-style: normal;
-    margin: 0;
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
   }
 
-  h2 {
-    font-size: 30px;
-    font-weight: 500;
-    line-height: 36px;
-    font-style: normal;
-  }
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
 
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
 }
 </style>

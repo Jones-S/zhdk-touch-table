@@ -1,27 +1,35 @@
-# Tree Table
+# ZHdK Touch Table
 
-Description will follow.
+This template should help get you started developing with Vue 3 in Vite.
 
-## Installing
+## Recommended IDE Setup
 
-``` npm install ```
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Develop
+## Customize configuration
 
-``` npm run dev ```
+See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-## Commitizen
+## Project Setup
 
-### Switch Branch
+```sh
+npm install
+```
 
-``` git pull ```
+### Compile and Hot-Reload for Development
 
-``` git checkout <branch> ```
+```sh
+npm run dev
+```
 
-### Commit
+### Compile and Minify for Production
 
-check branch:
-``` git branch ```
+```sh
+npm run build
+```
 
-commit:
-``` git cz ```
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```
