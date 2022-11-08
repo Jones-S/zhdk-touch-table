@@ -1,29 +1,27 @@
 <script>
-import sketchHTML from "../assets/sketches/osc-test/index.html?url";
+import html from "../assets/sketches/geotiff-test/index.html?url";
 
 export default {
-  name: "ProjectVue",
-  props: {
-    project: {
-      type: String,
-      required: true,
-    },
-  },
+  name: "GeotiffProject",
   computed: {
     html() {
-      return sketchHTML;
+      return html;
     },
   },
 };
 </script>
 
 <template>
-  <div class="Project">
+  <div class="GeotiffProject">
     <iframe :src="html" width="100%" frameborder="0"></iframe>
   </div>
 </template>
 
 <style scoped>
+.GeotiffProject {
+  min-height: 100vh;
+}
+
 h1 {
   font-weight: 500;
   font-size: 2.6rem;
@@ -32,5 +30,8 @@ h1 {
 
 h3 {
   font-size: 1.2rem;
+}
+iframe {
+  height: 100vh;
 }
 </style>

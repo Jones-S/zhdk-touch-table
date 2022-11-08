@@ -16,13 +16,20 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/:projectname",
-      name: "project",
-      props: { projectUrl: "test-osc" },
+      path: "/osc-test",
+      name: "OSC",
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/ProjectView.vue"),
+    },
+    {
+      path: "/geotiff-p5-test",
+      name: "Geotiff",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../components/GeotiffProject.vue"),
     },
   ],
 });

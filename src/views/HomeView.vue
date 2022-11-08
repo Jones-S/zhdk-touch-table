@@ -1,5 +1,13 @@
 <script setup></script>
 
 <template>
-  <main>Home</main>
+  <main>
+    <p>List of projects.</p>
+  </main>
 </template>
+
+<style scoped>
+main {
+  margin: var(--gutter);
+}
+</style>
