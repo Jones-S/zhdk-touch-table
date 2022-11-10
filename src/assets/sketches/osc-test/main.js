@@ -1,37 +1,72 @@
-const websocketServer = "ws://127.0.0.1:6050";
+function listenToTokens() {
+  const { wsPort } = Osc();
 
-const oscPort = new osc.WebSocketPort({
-  url: websocketServer,
-  metadata: true,
-});
-const viewPortWidth = window.innerWidth;
-const viewPortHeight = window.innerHeight;
+  console.log("wsPort: ", wsPort);
 
-console.log("screen: ", viewPortWidth, viewPortHeight);
+  // receiving token data
+  wsPort.on("updateDevice", (data) => {
+    // data.x and data.y are values between 0–1
+    const normalizedXPos = window.innerWidth * data.x;
+    const normalizedYPos = window.innerHeight * data.y;
 
-oscPort.open();
+    moveSVG(normalizedXPos, normalizedYPos);
+    updateText(Math.round(data.rotation));
+  });
+}
 
-oscPort.on("message", function (msg) {
-  if (msg.args[1]) {
-    const trackedDevice = {
-      id: msg.args[0].value,
-      identify: msg.args[1].value,
-      x: msg.args[2].value,
-      y: msg.args[3].value,
-      rot: msg.args[4].value,
-      intens: msg.args[5].value,
-    };
+function drawSVG() {
+  // creating an svg within the div with id #d3
+  const svg = d3
+    .select("#d3")
+    .append("svg")
+    // setting svg specific attributes for the svg tag
+    .attr("width", window.innerWidth)
+    .attr("height", window.innerHeight);
 
-    const xPos = trackedDevice.x * viewPortWidth;
-    const yPos = trackedDevice.y * viewPortHeight;
-    console.log("position: ", xPos, yPos);
+  // creating a <g> group tag
+  const g = svg.append("g");
 
-    if (msg.address === "/tracker/add") {
-      wsPort.emit("addDevice", trackedDevice);
-    } else if (msg.address === "/tracker/update") {
-      wsPort.emit("updateDevice", trackedDevice);
-    } else if (msg.address === "/tracker/remove") {
-      wsPort.emit("removeDevice", trackedDevice);
-    }
-  }
-});
+  // using the same svg selection from before and adding a line
+  g.append("circle")
+    .style("stroke", "#0022ff")
+    .style("stroke-width", "3px")
+    .style("fill", "transparent")
+    .attr("id", "circle")
+    .attr("r", 40)
+    .attr("cx", window.innerWidth / 2)
+    .attr("cy", window.innerHeight / 2);
+
+  g.append("text")
+    .attr("id", "rotation-text")
+    .attr("font-size", "9px")
+    .attr("text-anchor", "middle")
+    .attr("x", window.innerWidth / 2)
+    .attr("y", window.innerHeight / 2)
+    .attr("fill", "#000")
+    .text("0°");
+}
+
+function updateText(text) {
+  const circleText = d3.select("#rotation-text").text(`${text} °`);
+}
+
+function moveSVG(x, y) {
+  const svgCircle = d3
+    .select("#circle")
+    .transition()
+    .duration(500)
+    .ease(d3.easeLinear)
+    .attr("cx", x)
+    .attr("cy", y);
+
+  const circleText = d3
+    .select("#rotation-text")
+    .transition()
+    .duration(500)
+    .ease(d3.easeLinear)
+    .attr("x", x)
+    .attr("y", y + 4);
+}
+
+drawSVG();
+listenToTokens();

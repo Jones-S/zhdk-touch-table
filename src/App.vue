@@ -19,6 +19,8 @@ import { RouterLink, RouterView } from "vue-router";
 <style scoped>
 header {
   margin: var(--gutter);
+  margin-top: 0;
+  padding-top: var(--gutter);
 }
 
 .logo {

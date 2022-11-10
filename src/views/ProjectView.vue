@@ -1,26 +1,54 @@
-<script setup>
-import { onMounted, toRefs } from "vue";
+<script>
 import Project from "@/components/Project.vue";
 
-const props = defineProps({
-  projectUrl: {
-    type: String,
-    required: true,
+export default {
+  name: "ProjectView",
+  data() {
+    return {
+      projectMetaData: false,
+    };
   },
-});
-
-const { projectUrl } = toRefs(props);
-
-onMounted(() => {
-  console.log("projecturl from router: ", projectUrl.value);
-});
+  components: {
+    Project,
+  },
+  created() {
+    this.fetchProjectData();
+  },
+  methods: {
+    async fetchProjectData() {
+      const json = await import(`@/assets/content/${this.$route.params.projectname}.json`)
+        .then((module) => {
+          return module.default;
+        })
+        .catch((error) => {
+          console.error("error: ", error);
+        });
+      this.projectMetaData = json;
+    },
+  },
+};
 </script>
 
 <template>
-  <div class="project">
-    <h1>OSC Projekt</h1>
-    <Project :project="projectUrl" />
+  <div class="ProjectView">
+    <h1>{{ projectMetaData.title }}</h1>
+    <p>{{ projectMetaData.description }}</p>
+    <Project :project="'projectUrl'" />
   </div>
 </template>
 
-<style></style>
+<style>
+.ProjectView {
+  margin: var(--gutter);
+  pointer-events: none;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+p {
+  font-size: 12px;
+  max-width: 35em;
+}
+</style>
