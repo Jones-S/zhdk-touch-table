@@ -14,8 +14,16 @@ export default {
   created() {
     this.fetchProjectData();
   },
+  watch: {
+    "$route.params.projectname": {
+      handler: function () {
+        this.fetchProjectData();
+      },
+    },
+  },
   methods: {
     async fetchProjectData() {
+      console.log("this.$route.params.projectname: ", this.$route.params.projectname);
       const json = await import(`@/assets/content/${this.$route.params.projectname}.json`)
         .then((module) => {
           return module.default;

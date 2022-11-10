@@ -1,3 +1,10 @@
+const settings = {
+  circleSize: 40,
+  strokeWidth: 3,
+  triangleSize: 20,
+  fontSize: "9px",
+};
+
 function listenToTokens() {
   const { wsPort } = Osc();
 
@@ -10,6 +17,7 @@ function listenToTokens() {
     const normalizedYPos = window.innerHeight * data.y;
 
     moveSVG(normalizedXPos, normalizedYPos);
+    rotateSVG(data.rotation);
     updateText(Math.round(data.rotation));
   });
 }
@@ -24,48 +32,60 @@ function drawSVG() {
     .attr("height", window.innerHeight);
 
   // creating a <g> group tag
-  const g = svg.append("g");
+  const indicatorGroup = svg.append("g").attr("id", "indicator");
+  const rotatingGroup = indicatorGroup.append("g").attr("id", "rotate");
+
+  const triangle = d3.symbol().type(d3.symbolTriangle).size(settings.triangleSize);
 
   // using the same svg selection from before and adding a line
-  g.append("circle")
+  rotatingGroup
+    .append("circle")
     .style("stroke", "#0022ff")
-    .style("stroke-width", "3px")
+    .style("stroke-width", settings.strokeWidth)
     .style("fill", "transparent")
-    .attr("id", "circle")
-    .attr("r", 40)
-    .attr("cx", window.innerWidth / 2)
-    .attr("cy", window.innerHeight / 2);
 
-  g.append("text")
-    .attr("id", "rotation-text")
-    .attr("font-size", "9px")
+    .attr("r", settings.circleSize)
+    .attr("cx", 0)
+    .attr("cy", 0);
+
+  rotatingGroup
+    .append("path")
+    .attr("d", triangle)
+    .attr("stroke", "#0022ff")
+    .attr("fill", "#0022ff")
+    .attr("transform", `translate(0, -${settings.circleSize + settings.strokeWidth})`);
+
+  indicatorGroup
+    .append("text")
+    .attr("id", "indicator-text")
+    .attr("font-size", settings.fontSize)
     .attr("text-anchor", "middle")
-    .attr("x", window.innerWidth / 2)
-    .attr("y", window.innerHeight / 2)
+    .attr("x", 0)
+    .attr("y", 0)
     .attr("fill", "#000")
     .text("0°");
 }
 
 function updateText(text) {
-  const circleText = d3.select("#rotation-text").text(`${text} °`);
+  const circleText = d3.select("#indicator-text").text(`${text} °`);
 }
 
 function moveSVG(x, y) {
-  const svgCircle = d3
-    .select("#circle")
+  const indicator = d3
+    .select("#indicator")
     .transition()
     .duration(500)
     .ease(d3.easeLinear)
-    .attr("cx", x)
-    .attr("cy", y);
+    .attr("transform", () => `translate(${x}, ${y})`);
+}
 
-  const circleText = d3
-    .select("#rotation-text")
+function rotateSVG(degrees) {
+  const rotator = d3
+    .select("#rotate")
     .transition()
     .duration(500)
     .ease(d3.easeLinear)
-    .attr("x", x)
-    .attr("y", y + 4);
+    .attr("transform", () => `rotate(${degrees})`);
 }
 
 drawSVG();
