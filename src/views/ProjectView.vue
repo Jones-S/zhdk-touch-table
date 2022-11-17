@@ -34,6 +34,11 @@ export default {
       this.projectMetaData = json;
     },
   },
+  computed: {
+    projectUrl() {
+      return this.$route.params.projectname;
+    },
+  },
 };
 </script>
 
@@ -41,7 +46,7 @@ export default {
   <div class="ProjectView">
     <h1>{{ projectMetaData.title }}</h1>
     <p>{{ projectMetaData.description }}</p>
-    <Project :project="'projectUrl'" />
+    <Project :project="projectUrl" />
   </div>
 </template>
 

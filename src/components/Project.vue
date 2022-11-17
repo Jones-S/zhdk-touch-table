@@ -1,27 +1,26 @@
 <script>
-import sketchHTML from "../assets/sketches/osc-test/index.html?url";
+import oscHTML from "../assets/sketches/osc-test/index.html?url";
+import p5HTML from "../assets/sketches/p5-test/index.html?url";
+import sphereHTML from "../assets/sketches/3d-sphere/index.html?url";
 
 export default {
   name: "ProjectVue",
-  data() {
-    return {
-      sketch: false,
-    };
-  },
   props: {
     project: {
       type: String,
       required: true,
     },
   },
-  async mounted() {
-    const additional = await import("../assets/sketches/osc-test/index.html?url");
-    console.log("additional: ", additional);
-    this.sketch = additional;
-  },
   computed: {
+    htmlMap() {
+      return {
+        "3d-sphere": sphereHTML,
+        "osc-test": oscHTML,
+        "p5-test": p5HTML,
+      };
+    },
     html() {
-      return sketchHTML;
+      return this.htmlMap[this.project];
     },
   },
 };
@@ -29,7 +28,7 @@ export default {
 
 <template>
   <div class="Project">
-    <iframe v-if="sketch" :src="sketch" width="100%" frameborder="0"></iframe>
+    <iframe :src="html" width="100%" frameborder="0"></iframe>
   </div>
 </template>
 
