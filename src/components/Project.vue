@@ -3,11 +3,21 @@ import sketchHTML from "../assets/sketches/osc-test/index.html?url";
 
 export default {
   name: "ProjectVue",
+  data() {
+    return {
+      sketch: false,
+    };
+  },
   props: {
     project: {
       type: String,
       required: true,
     },
+  },
+  async mounted() {
+    const additional = await import("../assets/sketches/osc-test/index.html?url");
+    console.log("additional: ", additional);
+    this.sketch = additional;
   },
   computed: {
     html() {
@@ -19,7 +29,7 @@ export default {
 
 <template>
   <div class="Project">
-    <iframe :src="html" width="100%" frameborder="0"></iframe>
+    <iframe v-if="sketch" :src="sketch" width="100%" frameborder="0"></iframe>
   </div>
 </template>
 
