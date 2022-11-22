@@ -1,3 +1,6 @@
+let pg;
+let pointsOfInterest;
+
 function preload() {
   earthTexture = loadImage("images/earth-texture-night.jpg");
   cloudTexture = loadImage("images/cloud-texture.png");
@@ -62,6 +65,41 @@ function drawAxes() {
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+  pg = createGraphics(windowWidth / 2, windowHeight, WEBGL);
+  pg.pixelDensity(1);
+
+  /* restrictions:
+   * phi: 0–360° in radians (= latitude)
+   * theta: 0 - 180° in radians (= longitude)
+   */
+  pointsOfInterest = [
+    {
+      phi: radians(0),
+      theta: radians(100),
+      color: "red",
+    },
+    {
+      phi: radians(0),
+      theta: radians(0),
+      color: "yellow",
+    },
+    {
+      phi: radians(45),
+      theta: radians(70),
+      color: "orange",
+    },
+    {
+      phi: radians(90),
+      theta: radians(90),
+      color: "blue",
+    },
+    {
+      phi: radians(350),
+      theta: radians(25),
+      color: "grey",
+    },
+  ];
+
   textFont(Roboto);
   drawEarth(radius);
 }
@@ -73,50 +111,10 @@ function draw() {
 
   rotationStep = map(mouseX, 0, window.innerWidth, -0.07, 0.07);
 
-  // we need to regenerate this array each draw,
-  // because the radius of the sphere might change depending on zoom level
-
-  /* restrictions:
-   * phi: 0–360° in radians (= latitude)
-   * theta: 0 - 180° in radians (= longitude)
-   */
-  const pointsOfInterest = [
-    {
-      phi: radians(0),
-      theta: radians(100),
-      radius,
-      color: "red",
-    },
-    {
-      phi: radians(0),
-      theta: radians(0),
-      radius,
-      color: "yellow",
-    },
-    {
-      phi: radians(45),
-      theta: radians(70),
-      radius,
-      color: "orange",
-    },
-    {
-      phi: radians(90),
-      theta: radians(90),
-      radius,
-      color: "blue",
-    },
-    {
-      phi: radians(350),
-      theta: radians(25),
-      radius,
-      color: "grey",
-    },
-  ];
-
   for (let index = 0; index < pointsOfInterest.length; index++) {
     const point = pointsOfInterest[index];
     const vector = pointOnSphere({
-      r: point.radius,
+      r: radius,
       theta: point.theta,
       phi: point.phi,
     });
@@ -127,6 +125,41 @@ function draw() {
     sphere(pointOfInterestSize);
     pop();
   }
+
+  checkMouseOver();
+}
+
+function checkMouseOver() {
+  // this is very tricky in 3d
+  // we can bypass an actual click by checking the color
+  const mouseObj = getObject(mouseX, mouseY);
+
+  console.log("mouseObj: ", mouseObj);
+}
+
+/* This function gets the red channel of the pixel under the mouse as
+ * the index for the corresponding object. A more advanced version
+ * could use the 4 bytes (see commented section)
+ */
+function getObject(mx, my) {
+  if (mx > width || my > height) {
+    return 0;
+  }
+
+  const gl = pg.elt.getContext("webgl");
+  const pix = getPixels();
+  console.log("pix: ", pix);
+
+  const index = 4 * ((gl.drawingBufferHeight - my) * gl.drawingBufferWidth + mx);
+
+  // var cor = color(
+  // 	pix[index + 0],
+  // 	pix[index + 1],
+  // 	pix[index + 2],
+  // 	pix[index + 3]);
+  // return cor;
+
+  return pix[index]; // Only returning the red channel as the object index.
 }
 
 // because the p5 coordinate system is not standard, we have different x,y and z
@@ -144,4 +177,24 @@ function zoomIn() {
 
 function zoomOut() {
   radius = radius - 30;
+}
+
+/* This function loads the pixels of the color buffer canvas
+ * into an array called pixels and returns them.
+ * Obtained from: https://gist.github.com/sixhat/5bcf3b8d159e7285e247a96c1cbf055f#file-sketch-js-L137
+ */
+
+function getPixels() {
+  var gl = pg.elt.getContext("webgl");
+  var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+  gl.readPixels(
+    0,
+    0,
+    gl.drawingBufferWidth,
+    gl.drawingBufferHeight,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    pixels
+  );
+  return pixels;
 }
