@@ -1,13 +1,10 @@
-let pg;
-let pointsOfInterest;
-
 function preload() {
   earthTexture = loadImage("images/earth-texture-night.jpg");
   cloudTexture = loadImage("images/cloud-texture.png");
   Roboto = loadFont("roboto.ttf");
 }
 
-const cloudOffset = 12; // distance from globe to clouds
+let pointsOfInterest;
 let radius = 300;
 let rotation = 1;
 let rotationStep = 0;
@@ -15,8 +12,6 @@ const pointOfInterestSize = 3;
 
 const zoomInButton = document.querySelector('[data-js="zoom-in"]');
 const zoomOutButton = document.querySelector('[data-js="zoom-out"]');
-console.log("zoomInButton: ", zoomInButton);
-
 zoomInButton.addEventListener("click", zoomIn);
 zoomOutButton.addEventListener("click", zoomOut);
 
@@ -125,41 +120,6 @@ function draw() {
     sphere(pointOfInterestSize);
     pop();
   }
-
-  checkMouseOver();
-}
-
-function checkMouseOver() {
-  // this is very tricky in 3d
-  // we can bypass an actual click by checking the color
-  const mouseObj = getObject(mouseX, mouseY);
-
-  console.log("mouseObj: ", mouseObj);
-}
-
-/* This function gets the red channel of the pixel under the mouse as
- * the index for the corresponding object. A more advanced version
- * could use the 4 bytes (see commented section)
- */
-function getObject(mx, my) {
-  if (mx > width || my > height) {
-    return 0;
-  }
-
-  const gl = pg.elt.getContext("webgl");
-  const pix = getPixels();
-  console.log("pix: ", pix);
-
-  const index = 4 * ((gl.drawingBufferHeight - my) * gl.drawingBufferWidth + mx);
-
-  // var cor = color(
-  // 	pix[index + 0],
-  // 	pix[index + 1],
-  // 	pix[index + 2],
-  // 	pix[index + 3]);
-  // return cor;
-
-  return pix[index]; // Only returning the red channel as the object index.
 }
 
 // because the p5 coordinate system is not standard, we have different x,y and z
@@ -177,24 +137,4 @@ function zoomIn() {
 
 function zoomOut() {
   radius = radius - 30;
-}
-
-/* This function loads the pixels of the color buffer canvas
- * into an array called pixels and returns them.
- * Obtained from: https://gist.github.com/sixhat/5bcf3b8d159e7285e247a96c1cbf055f#file-sketch-js-L137
- */
-
-function getPixels() {
-  var gl = pg.elt.getContext("webgl");
-  var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-  gl.readPixels(
-    0,
-    0,
-    gl.drawingBufferWidth,
-    gl.drawingBufferHeight,
-    gl.RGBA,
-    gl.UNSIGNED_BYTE,
-    pixels
-  );
-  return pixels;
 }
