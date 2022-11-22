@@ -53,14 +53,17 @@ export default {
 <style>
 .ProjectView {
   margin: var(--gutter);
-  pointer-events: none;
 }
 
 h1 {
   font-size: 20px;
+  z-index: 10;
+  position: relative;
 }
 
 p {
+  z-index: 10;
+  position: relative;
   font-size: 12px;
   max-width: 35em;
 }
