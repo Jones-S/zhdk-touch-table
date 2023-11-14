@@ -2,6 +2,7 @@
 import oscHTML from "../assets/sketches/osc-test/index.html?url";
 import p5HTML from "../assets/sketches/p5-test/index.html?url";
 import sphereHTML from "../assets/sketches/3d-sphere/index.html?url";
+import tokenHTML from "../assets/sketches/token/index.html?url";
 
 export default {
   name: "ProjectVue",
@@ -17,6 +18,7 @@ export default {
         "3d-sphere": sphereHTML,
         "osc-test": oscHTML,
         "p5-test": p5HTML,
+        token: tokenHTML,
       };
     },
     html() {
